@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=https://app.stainless.com/config.schema.json
+
+edition: 2025-10-10
+
+organization:
+  name: safety-gateway
+  docs: ""
+  contact: ""
+
+targets:
+  python:
+    edition: python.2025-10-08
+    package_name: safety_gateway
+    project_name: safety_gateway
+    production_repo: xaviour098/PGuard
+    publish:
+      pypi: true
+
+environments:
+  development: http://localhost:8000
+  production: https://api.yourdomain.com
+
+resources:
+  chat:
+    methods:
+      create: post /v1/chat/completions
+
+settings:
+  disable_mock_tests: true
+  license: Apache-2.0
+
+readme:
+  example_requests:
+    default:
+      type: request
+      endpoint: post /v1/chat/completions
+      params:
+        prompt: "Hello from the SDK!"
+    headline:
+      type: request
+      endpoint: post /v1/chat/completions
+      params:
+        prompt: "Hello from the SDK!"
