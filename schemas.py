@@ -1,62 +1,28 @@
+# schemas.py
 from enum import Enum
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
-# --- 1. The Enums (The most important part for SDKs) ---
-# Stainless will turn these into strictly typed Enums.
-# Users will type "ViolationType." and see these options automatically.
 class ViolationType(str, Enum):
     HATE_SPEECH = "hate_speech"
     SELF_HARM = "self_harm"
     SEXUAL_CONTENT = "sexual_content"
     VIOLENCE = "violence"
-    PROMPT_INJECTION = "prompt_injection"  # User tries to hack the LLM
-    PII = "pii"                           # Personally Identifiable Information
+    PROMPT_INJECTION = "prompt_injection"
+    PII = "pii"
 
-# --- 2. The Request (Input) ---
-# This defines the arguments for client.guard.check(...)
 class SafetyCheckRequest(BaseModel):
-    prompt: str = Field(
-        ..., 
-        description="The user prompt to validate against safety rules."
-    )
-    model: str = Field(
-        "gpt-4", 
-        description="The target LLM model. Used for specific heuristic adjustments."
-    )
-    # Example of an optional flag
-    detect_pii: bool = Field(
-        True, 
-        description="Whether to scan for Personally Identifiable Information (phones, emails)."
-    )
+    prompt: str = Field(..., description="The user prompt to validate.")
+    project_id: Optional[str] = Field(None, description="User's project ID for tracking.")
 
-# --- 3. The Metadata (Reporting) ---
-# Detailed info about WHY something was blocked.
 class SafetyAnalysis(BaseModel):
-    risk_score: float = Field(
-        ..., 
-        description="A score between 0.0 (Safe) and 1.0 (Dangerous)."
-    )
-    detected_categories: List[ViolationType] = Field(
-        default=[], 
-        description="List of specific violations found in the prompt."
-    )
+    risk_score: float = Field(..., description="0.0 (Safe) to 1.0 (Unsafe).")
+    detected_categories: List[ViolationType] = Field(default=[])
 
-# --- 4. The Response (Output) ---
-# This is what the user gets back: `response = client.guard.check(...)`
-class SafetyCheckResponse(BaseModel):
-    id: str = Field(..., description="Unique ID for this safety check.")
-    
-    allowed: bool = Field(
-        ..., 
-        description="Whether the prompt is safe to proceed."
-    )
-    
-    # If allowed=True, this holds the safe prompt (or modified/spotlighted prompt)
-    safe_prompt: Optional[str] = Field(
-        None, 
-        description="The sanitized prompt (if modified by Spotlight)."
-    )
-    
-    # The analysis details
+class Verdict(BaseModel):
+    id: str
+    allowed: bool
+    # Optional: If you rewrite the prompt (e.g. remove PII), put it here.
+    # If None, the user should use their original prompt.
+    sanitized_prompt: Optional[str] = None 
     analysis: SafetyAnalysis
