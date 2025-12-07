@@ -4,7 +4,7 @@ import asyncio
 import uuid
 import os
 import google.generativeai as genai
-from schemas import ViolationType, Verdict, SafetyAnalysis
+from src.schemas import ViolationType, Verdict, SafetyAnalysis
 
 # --- LAYER 1: Regex Guard (Server Side Fallback) ---
 class RegexGuard:

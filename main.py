@@ -1,7 +1,7 @@
 # main.py
 from fastapi import FastAPI
-from schemas import SafetyCheckRequest, Verdict
-from engine import SafetyPipeline
+from src.schemas import SafetyCheckRequest, Verdict
+from src.engine import SafetyPipeline
 import uvicorn
 import os
 from dotenv import load_dotenv

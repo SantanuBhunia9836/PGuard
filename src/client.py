@@ -39,9 +39,11 @@ class SafetyGateway:
         # 1. Local Check (Zero Latency)
         for pattern in self.input_patterns:
             if pattern.search(prompt):
-                return GuardResult(False, "Local: Blocked by basic regex")
+                return GuardResult(False, "Local: Blocked by basic regex")\
+                
+        #2. scoring 
 
-        # 2. Remote Check (Intelligence)
+        # 2. Remote Check (Intelligence)  server
         try:
             resp = requests.post(
                 f"{self.base_url}/v1/guard",
