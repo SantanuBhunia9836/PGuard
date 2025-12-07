@@ -33,7 +33,7 @@ class SafetyGateway:
 
     def check_input(self, prompt: str) -> GuardResult:
         """
-        1. Checks Local Regex.
+        1. Checks Local.
         2. If Safe, calls Remote API.
         """
         # 1. Local Check (Zero Latency)
