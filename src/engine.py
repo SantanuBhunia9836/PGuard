@@ -7,27 +7,27 @@ import google.generativeai as genai
 from src.schemas import ViolationType, Verdict, SafetyAnalysis
 
 # --- LAYER 1: Regex Guard (Server Side Fallback) ---
-class RegexGuard:
-    def __init__(self):
-        # We keep these generic. Specific PII is handled by the SDK locally.
-        self.patterns = {
-            ViolationType.PROMPT_INJECTION: [
-                r"ignore (all )?previous instructions",
-                r"system override",
-                r"DAN mode",
-                r"jailbreak",
-            ],
-            ViolationType.PII: [
-                r"\b\d{3}-\d{2}-\d{4}\b", # SSN
-            ]
-        }
+# class RegexGuard:
+#     def __init__(self):
+#         # We keep these generic. Specific PII is handled by the SDK locally.
+#         self.patterns = {
+#             ViolationType.PROMPT_INJECTION: [
+#                 r"ignore (all )?previous instructions",
+#                 r"system override",
+#                 r"DAN mode",
+#                 r"jailbreak",
+#             ],
+#             ViolationType.PII: [
+#                 r"\b\d{3}-\d{2}-\d{4}\b", # SSN
+#             ]
+#         }
 
-    def check(self, prompt: str):
-        for category, patterns in self.patterns.items():
-            for pattern in patterns:
-                if re.search(pattern, prompt, re.IGNORECASE):
-                    return category
-        return None
+#     def check(self, prompt: str):
+#         for category, patterns in self.patterns.items():
+#             for pattern in patterns:
+#                 if re.search(pattern, prompt, re.IGNORECASE):
+#                     return category
+#         return None
 
 # --- LAYER 2: LLM Judge ---
 class LLMJudge:

@@ -1,8 +1,9 @@
 # client.py
-import re
+# import re
 import requests
 from typing import List, Optional
 from dataclasses import dataclass
+from patterns import LOCAL_PATTERNS
 
 # Simple dataclass for the result (mirroring the API)
 @dataclass
@@ -17,10 +18,7 @@ class SafetyGateway:
         
         # --- LAYER 1: LOCAL INPUT REGEX ---
         # These run instantly on the client machine
-        self.input_patterns = [
-            re.compile(r"ignore previous instructions", re.IGNORECASE),
-            re.compile(r"drop table", re.IGNORECASE), # SQLi Basic
-        ]
+        self.input_patterns = LOCAL_PATTERNS
         
         # --- LAYER 4: LOCAL OUTPUT PRIVACY PATTERNS ---
         # Empty by default. User populates this.
@@ -60,6 +58,7 @@ class SafetyGateway:
     def check_output(self, text: str) -> GuardResult:
         """
         Checks the LLM response against PRIVATE local patterns.
+        
         """
         for pattern in self.private_patterns:
             if pattern.search(text):

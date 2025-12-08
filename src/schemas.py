@@ -2,6 +2,7 @@
 from enum import Enum
 from typing import List, Optional
 from pydantic import BaseModel, Field
+from typing import Union, Dict, List
 
 class ViolationType(str, Enum):
     HATE_SPEECH = "hate_speech"
@@ -11,9 +12,14 @@ class ViolationType(str, Enum):
     PROMPT_INJECTION = "prompt_injection"
     PII = "pii"
 
+class Message(BaseModel):
+    role: str   # "user" or "assistant"
+    content: str
+
 class SafetyCheckRequest(BaseModel):
-    prompt: str = Field(..., description="The user prompt to validate.")
-    project_id: Optional[str] = Field(None, description="User's project ID for tracking.")
+    prompt: Union[str, List[Message]] 
+    project_id: Optional[str] = None
+    
 
 class SafetyAnalysis(BaseModel):
     risk_score: float = Field(..., description="0.0 (Safe) to 1.0 (Unsafe).")
